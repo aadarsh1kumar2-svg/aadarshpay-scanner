@@ -1,0 +1,30 @@
+name: Gmail Payment Scanner
+
+on:
+  schedule:
+    # Har 5 minute mein chalega
+    - cron: '*/5 * * * *'
+  workflow_dispatch: # Taaki aap manually bhi chala sako
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Scanner
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASS: ${{ secrets.GMAIL_APP_PASS }}
+          GATEWAY_URL: ${{ secrets.GATEWAY_URL }}
+          INTERNAL_SECRET: ${{ secrets.INTERNAL_SECRET }}
+        run: python scanner.py
